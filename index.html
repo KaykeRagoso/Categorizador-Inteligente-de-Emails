@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio AutoU Email</title>
+    <link rel="stylesheet" href="Styles/style.css">
+</head>
+<body>
+    <header class="header">
+        <h1>Classificador de Emails Por IA</h1>
+    </header>
+    <main class="container">
+        <form id="email-form" class="card">
+            <h2>Enviar Email para Análise</h2>
+
+            <!-- ENTRADA DO TEXTO -->
+             <label for="emailText">Texto do email</label>
+             <textarea
+                id="emailText"
+                name="emailText"
+                placeholder="Cole aqui o conteúdo do email para analise..."
+             ></textarea>
+
+             <div class="divider">OU</div>
+
+             <!-- ENTRADA DE ARQUIVO -->
+              <label for="emailFile">Upload de arquivo (.txt ou .pdf)</label>
+              <input type="file" name="emailFile" id="emailFile" accept=".txt,.pdf"/>
+
+              <button type="submit">Analise Email</button>
+
+        </form>
+    <footer class="rodape">
+            <p>Desenvolvido por Kayke Ragoso</p>
+    </footer>
+</body>
+</html>
