@@ -31,8 +31,33 @@
               <button type="submit">Analise Email</button>
 
         </form>
+        <!-- SCANEAR EMAIL -->
+        <div id="loading" class="loading hidden">
+            <p>Scaneando Email</p>
+        </div>
+        <!-- EXIBIR RESULTADO -->
+         <section id="result" class="card hidden">
+
+            <h2>Resultado da Análise</h2>
+
+            <p>
+                <Strong>Categoria:</Strong>
+                <span id="category" class="badge"></span>
+            </p>
+
+            <div class="resposta">
+                <strong>Resposta Sugerida: </strong>
+                <p id="reply"></p>
+            </div>
+            
+            <button id="resetBtn" class="secondary">
+                Analisar outro email
+            </button>
+         </section>
+    </main>
     <footer class="rodape">
             <p>Desenvolvido por Kayke Ragoso</p>
     </footer>
+    <script src="JS/main.js"></script>
 </body>
 </html>
