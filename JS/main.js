@@ -10,7 +10,7 @@ const resetBtn = document.getElementById("resetBtn");
 form.addEventListener("submit", async (e) => {
     event.preventDefault();
 
-    //Validar
+    //Validar se não tam vazio
     if(!emailText.value && !emailFile.files.length){
         alert("Por favor, insira o texto do email ou selecione o arquivo.")
         return;
@@ -43,3 +43,27 @@ form.addEventListener("submit", async (e) => {
         loading.classList.add("hidden");
     }
 }); 
+
+// Função para mostrar o resultado
+function mostrarResultado(caterory, reply){
+    categorySpan.textContent = category;
+
+    categorySpan.classList.remove("emailprodutivo","emailimprodutivo");
+
+    if (caterory.toLowerCase() === "emailprodutivo"){
+        categorySpan.classList.add("emailprodutivo");
+    } else {
+        categorySpan.classList.add("emailimprodutivo");
+    }
+
+    replyParagraph.textContent = reply;
+
+    resultSection.classList.remove("hidden");
+}
+
+//Botão de Resetar
+resetBtn.addEventListener("click", () =>{
+    form.reset();
+    resultSection.classList.add("hidden");
+});
+    
