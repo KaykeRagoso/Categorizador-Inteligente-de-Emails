@@ -21,6 +21,7 @@ Desafio-AutoU-Email/
 ├── venv/                # Ambiente virtual Python
 └── .gitignore
 
+
 Funcionalidades
 
 Classificação automática de emails em:
