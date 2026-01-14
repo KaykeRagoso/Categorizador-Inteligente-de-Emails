@@ -1,153 +1,149 @@
-from flask import Flask, request,jsonify, render_template
+from flask import Flask, request, jsonify, render_template
 from werkzeug.utils import secure_filename
+from werkzeug.exceptions import RequestEntityTooLarge
 
 import os
 import re
 import PyPDF2
+from transformers import pipeline
 
+
+# Configurações
 caminho_diretorio = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(
-        __name__,
-        template_folder=os.path.join(caminho_diretorio,"..", "Templates"),
-        static_folder=os.path.join(caminho_diretorio,"..", "Static")
-    )
+    __name__,
+    template_folder=os.path.join(caminho_diretorio, "..", "Templates"),
+    static_folder=os.path.join(caminho_diretorio, "..", "Static")
+)
 
+UPLOAD_PASTA = os.path.join(caminho_diretorio, "..", "Upload")
+EXTENSOES_PERMITIDAS = {"txt", "pdf"}
 
-origem_pastas = os.path.join(caminho_diretorio,"..","Upload")
-extensoes_permitidas = {"txt","pdf"}
+app.config["UPLOAD_PASTA"] = UPLOAD_PASTA
+app.config["MAX_CONTENT_LENGTH"] = 7 * 1024 * 1024  # 7MB
 
-app.config['MAX_CONTENT_LENGTH'] = 7 * 1024 * 1024  # Limite de 7MB para uploads
-from flask import RequestEntityTooLarge
+if not os.path.exists(UPLOAD_PASTA):
+    os.makedirs(UPLOAD_PASTA)
 
-@app.errorhandler(RequestEntityTooLarge)
-def arquivo_grande(error):
-    return jsonify({"error": "O arquivo enviado é muito grande. O tamanho máximo permitido é 7MB."}), 413
-
-
-app.config["UPLOAD_PASTA"] = origem_pastas
-
-# Se não tiver a pasta de uploads, criamos ela
-if not os.path.exists(origem_pastas):
-    os.makedirs(origem_pastas)
+# NLP LOCAL
+sentiment_analyzer = pipeline(
+    "sentiment-analysis",
+    model="distilbert/distilbert-base-uncased-finetuned-sst-2-english"
+)
 
 
 def entrada_arquivo(filename):
-    return "." in filename and filename.rsplit(".",1)[1].lower() in extensoes_permitidas
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in EXTENSOES_PERMITIDAS
+
 
 def limpar_texto(texto):
-    # Colocar texto em minusculo, remover caracteres especiais e espaços
     texto = texto.lower()
-    texto = re.sub(r"[^a-zA-Z0-9\s]", "", texto)
+    texto = re.sub(r"[^a-zA-Z0-9áàãâéêíóôõúç\s]", "", texto)
     texto = re.sub(r"\s+", " ", texto)
     return texto.strip()
 
-def classificar_email(texto):
-    texto = texto.lower()
 
-    # Classificar o email por palavras-chave
-
-    palavras_produtivas = [
-        "solicitação", "urgente", "importante", "ação necessária", "responder",
-        "pendente", "prioridade", "atendimento", "suporte", "assistência",
-        "pedido","reunião","agendamento","confirmação","aprovação","encaminhamento",
-        "contrato","falha","erro","problema","reclamação","dúvida","informação",
-        "detalhes","documento","anexo","proposta","orçamento","fatura","pagamento",
-        "cobrança","relatório","análise","feedback","sugestão","melhoria","planejamento",
-        "estratégia","objetivo","meta","resultado","desempenho","avaliação",
-        "comunicação","notificação","alerta","atualização","novidade","lançamento",
-        "evento","convite","participação"
-    ]
-    
-    palavras_improdutivas = [
-        "promoções","aproveite","imóveis","descontos","oferta","compre agora",
-        "grátis","clique aqui","inscreva-se","ganhe","brinde","cupom","sorteio",
-        "concursos","publicidade","marketing","newsletter","boletim","anúncio",
-        "divulgação","campanha","venda","liquidação","promoção especial","oferta limitada",
-        "desconto exclusivo","economize agora","oferta imperdível","compre já","frete grátis",
-        "garantia de satisfação","teste grátis","demonstração gratuita","amostra grátis"
-    ]
-
-    produtivas_contador = sum(1 for p in palavras_produtivas if re.search(rf"\b{re.escape(p)}\b", texto))
-    improdutivos_contador = sum(3 for p in palavras_improdutivas if re.search(rf"\b{re.escape(p)}\b", texto))
-
-    if improdutivos_contador > produtivas_contador:
-        return "Email Improdutivo"
-    
-    return "Email Produtivo"
-
-def resposta_sugerida(categoria):
-    # Gerar resposta baseada na classificação(classificar_email())
-    if categoria == "Email Produtivo":
-        return (
-            "Olá!\n\n"
-            "Recebemos seu email e nossa equipe já está analisando sua solicitação. "
-            "Entraremos em contato com uma atualização o mais breve possível.\n\n"
-            "Atenciosamente,\nEquipe de Suporte"
-        )
-
-    return(
-            "Olá!\n\n"
-            "Agradecemos sua mensagem! Ficamos felizes em receber seu contato. "
-            "Não é necessária nenhuma ação adicional.\n\n"
-            "Atenciosamente,\nEquipe de Suporte"
-        )
-    
-def ler_arquivo_pdf(caminho_arquivo):
-    # Ler arquivo PDF ou TXT e retornar o texto
-    ext = caminho_arquivo.rsplit(".",1)[1].lower()
+def ler_arquivo(caminho_arquivo):
+    ext = caminho_arquivo.rsplit(".", 1)[1].lower()
 
     if ext == "txt":
         with open(caminho_arquivo, "r", encoding="utf-8") as file:
             return file.read()
-    
+
     elif ext == "pdf":
-        text = ""
+        texto = ""
         with open(caminho_arquivo, "rb") as file:
             reader = PyPDF2.PdfReader(file)
             for page in reader.pages:
-                text += page.extract_text() or ""
-            return text
-    
+                texto += page.extract_text() or ""
+        return texto
+
     return ""
+
+
+def classificar_email_hibrido(texto):
+    texto = texto.lower()
+
+    regras_improdutivas = [
+        "Marketing","newsletter", "promoção", "oferta", "publicidade",
+        "spam", "propaganda", "anúncio", "desconto", "venda",
+        "compre agora", "clique aqui", "inscreva-se", "assinatura",
+        "garanta já", "última chance", "exclusivo", "imperdível",
+        "brinde", "cupom", "sorteio", "concursos", "liquidação"
+    ]
+
+    palavras_acao = [
+        "solicito", "verificar", "analisar", "erro", "problema",
+        "reunião", "prazo", "documento", "anexo",
+        "confirmação", "retorno", "atualização", "encaminho"
+    ]
+
+    # Camada 1 – improdutivo explícito
+    if any(p in texto for p in regras_improdutivas):
+        return {
+            "category": "Email Improdutivo",
+            "reply": "Olá! Obrigado pela mensagem. Nenhuma ação é necessária no momento."
+        }
+
+    # Camada 2 – produtivo por intenção
+    if any(p in texto for p in palavras_acao):
+        return {
+            "category": "Email Produtivo",
+            "reply": "Olá! Recebemos sua solicitação e nossa equipe irá analisar o quanto antes."
+        }
+
+    # Camada 3 – NLP (desempate)
+    resultado = sentiment_analyzer(texto[:512])[0]
+
+    if resultado["label"].lower() == "positive" and resultado["score"] >= 0.85:
+        return {
+            "category": "Email Produtivo",
+            "reply": "Olá! Seu email foi recebido e será tratado pela equipe responsável."
+        }
+
+    return {
+        "category": "Email Improdutivo",
+        "reply": "Olá! Obrigado pelo contato. Não é necessária nenhuma ação adicional."
+    }
+
 
 @app.route("/")
 def index():
     return render_template("index.html")
 
+
 @app.route("/analyze", methods=["POST"])
 def analisar_email():
     email_text = request.form.get("emailText", "")
     email_file = request.files.get("emailFile")
-    content = ""
 
-    # Se houver arquivo válido, ler o conteúdo
+    conteudo = ""
+
     if email_file and entrada_arquivo(email_file.filename):
         filename = secure_filename(email_file.filename)
-        caminho_arquivo = os.path.join(app.config["UPLOAD_PASTA"], filename)
-        email_file.save(caminho_arquivo)
-        content += ler_arquivo_pdf(caminho_arquivo)
+        caminho = os.path.join(app.config["UPLOAD_PASTA"], filename)
+        email_file.save(caminho)
+        conteudo += ler_arquivo(caminho)
 
-    # Adicionar texto do formulário, se houver
     if email_text.strip():
-        content += " " + email_text
+        conteudo += " " + email_text
 
-    # Se não houver conteúdo, retorna erro
-    if not content.strip():
+    if not conteudo.strip():
         return jsonify({"error": "Nenhum conteúdo encontrado."}), 400
 
-    # Processamento do texto
-    processamento_texto = limpar_texto(content)
-    categoria = classificar_email(processamento_texto)
-    resposta = resposta_sugerida(categoria)
+    texto_limpo = limpar_texto(conteudo)
+    resultado = classificar_email_hibrido(texto_limpo)
 
+    return jsonify( resultado)
+
+
+@app.errorhandler(RequestEntityTooLarge)
+def arquivo_grande(error):
     return jsonify({
-        "category": categoria,
-        "reply": resposta
-    })
+        "error": "Arquivo muito grande. O tamanho máximo permitido é 7MB."
+    }), 413
 
 
-
-# Rodar o app
 if __name__ == "__main__":
     app.run(debug=True)
