@@ -38,11 +38,14 @@ def classificar_email(texto):
 
     palavras_produtivas = ["solicitação", "urgente", "importante", "ação necessária", "responder", "pendente", "prioridade", "atendimento", "suporte", "assistência","pedido","reunião","agendamento","confirmação","urgente","prioridade","aprovação","encaminhamento","contrato","falha","erro","problema","reclamação","dúvida","informação","detalhes","documento","anexo","proposta","orçamento","fatura","pagamento","cobrança","relatório","análise","feedback","sugestão","melhoria","planejamento","estratégia","objetivo","meta","resultado","desempenho","avaliação","comunicação","notificação","alerta","atualização","novidade","lançamento","evento","convite","participação"]
 
-    for palavra in palavras_produtivas:
-        if palavra in texto:
-            return "Email Produtivo"
+    palavras_improdutivas = ["promoções","Aproveite","Imóveis","Descontos","Oferta","Compre agora","Grátis","Clique aqui","Inscreva-se","Ganhe","Brinde","Cupom","Sorteio","Concursos","Publicidade","Marketing","Newsletter","Boletim","Anúncio","Divulgação","Campanha","Venda","Liquidação","Promoção especial","Oferta limitada","Desconto exclusivo","Economize agora","Oferta imperdível","Compre já","Frete grátis","Garantia de satisfação","Teste grátis","Demonstração gratuita","Amostra grátis"]
 
-    return "Email Não Produtivo"
+    produtivas_contador = sum(1 for p in palavras_produtivas if p in texto)
+    improdutivos_contador = sum(1 for p in palavras_improdutivas if p in texto)
+
+    if improdutivos_contador > produtivas_contador:
+        return "Email Não Produtivo"
+    return "Email Produtivo"
 
 def resposta_sugerida(categoria):
     # Gerar resposta baseada na classificação(classificar_email())
