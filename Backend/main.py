@@ -27,11 +27,16 @@ if not os.path.exists(UPLOAD_PASTA):
     os.makedirs(UPLOAD_PASTA)
 
 # NLP LOCAL
-sentiment_analyzer = pipeline(
-    "sentiment-analysis",
-    model="distilbert/distilbert-base-uncased-finetuned-sst-2-english"
-)
+sentiment_analyzer = None
 
+def get_sentiment_analyzer():
+    global sentiment_analyzer
+    if sentiment_analyzer is None:
+        sentiment_analyzer = pipeline(
+            "sentiment-analysis",
+            model="distilbert/distilbert-base-uncased-finetuned-sst-2-english"
+        )
+    return sentiment_analyzer
 
 def entrada_arquivo(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in EXTENSOES_PERMITIDAS
@@ -94,7 +99,8 @@ def classificar_email_hibrido(texto):
         }
 
     # Camada 3 – NLP (desempate)
-    resultado = sentiment_analyzer(texto[:512])[0]
+    analyzer = get_sentiment_analyzer()
+    resultado = analyzer(texto[:512])[0]  # Limitar a 512 caracteres para melhor desempenho
 
     if resultado["label"].lower() == "positive" and resultado["score"] >= 0.85:
         return {
@@ -146,4 +152,5 @@ def arquivo_grande(error):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
