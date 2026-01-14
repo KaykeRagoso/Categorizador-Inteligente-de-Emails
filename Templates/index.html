@@ -1,62 +1,77 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Desafio AutoU Email</title>
+
     <link rel="stylesheet" href="{{ url_for('static', filename='CSS/style.css') }}">
     <script src="{{ url_for('static', filename='JS/main.js') }}" defer></script>
 </head>
 <body>
+
     <header class="header">
         <h1>Classificador de Emails Por IA</h1>
     </header>
+
     <main class="container">
+
         <form id="email-form" class="card">
             <h2>Enviar Email para Análise</h2>
 
             <!-- ENTRADA DO TEXTO -->
-             <label for="emailText">Texto do email</label>
-             <textarea
+            <label for="emailText">Texto do email</label>
+            <textarea
                 id="emailText"
                 name="emailText"
                 placeholder="Cole aqui o conteúdo do email para analise..."
-             ></textarea>
+            ></textarea>
 
-             <div class="divider">OU</div>
+            <div class="divider">OU</div>
 
-             <!-- ENTRADA DE ARQUIVO -->
-              <label for="emailFile">Upload de arquivo (.txt ou .pdf)</label>
-              <input type="file" name="emailFile" id="emailFile" accept=".txt,.pdf"/>
+            <!-- ENTRADA DE ARQUIVO -->
+            <label for="emailFile">Upload de arquivo (.txt ou .pdf)</label>
+            <input type="file" name="emailFile" id="emailFile" accept=".txt,.pdf"/>
 
-              <button type="submit">Analisar Email</button>
-
+            <button type="submit" class="btn-primary">
+                Analisar Email
+            </button>
         </form>
-        <!-- SCANEAR EMAIL -->
-        <div id="loading" class="loading hidden">
-            <p>Scaneando Email</p>
+
+        <!-- LOADER -->
+        <div id="loading" class="loading hidden fade">
+            <div class="spinner"></div>
+            <p>Scaneando Email...</p>
         </div>
-        <!-- EXIBIR RESULTADO -->
-         <section id="result" class="card hidden">
+
+        <!-- RESULTADO -->
+        <section id="result" class="card hidden fade">
 
             <h2>Resultado da Análise</h2>
 
             <p>
-                <Strong>Categoria:</Strong>
+                <strong>Categoria:</strong>
                 <span id="category" class="badge"></span>
             </p>
 
             <div class="resposta">
-                <strong>Resposta Sugerida: </strong>
+                <strong>Resposta Sugerida:</strong>
                 <p id="reply"></p>
             </div>
-            
+
             <button id="resetBtn" class="secondary">
                 Analisar outro Email
             </button>
-         </section>
+        </section>
+
+    </main>
+
     <footer class="rodape">
-            <p>Desenvolvido por Kayke Ragoso | Processo Seletivo <a href="https://www.autou.io/">AutoU</a></p>
+        <p>
+            Desenvolvido por Kayke Ragoso | Processo Seletivo
+            <a href="https://www.autou.io/">AutoU</a>
+        </p>
     </footer>
+
 </body>
 </html>

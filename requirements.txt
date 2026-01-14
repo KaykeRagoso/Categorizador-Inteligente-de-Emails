@@ -1,2 +1,5 @@
 flask
 PyPDF2
+transformers
+torch
+werkzeug

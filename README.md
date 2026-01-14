@@ -1,8 +1,25 @@
 # Desafio AutoU - Classificador de Emails
 
-Este projeto é uma aplicação web que classifica emails como produtivos ou improdutivos utilizando análise de palavras-chave. Ele permite enviar emails via textarea ou upload de arquivos (.txt ou .pdf), e gera uma resposta sugerida baseada na classificação.
+ - Este projeto é uma aplicação web para classificação automática de emails em Produtivos ou Improdutivos, utilizando uma abordagem híbrida de NLP local, combinando regras semânticas com análise de linguagem natural, sem uso de APIs pagas.
+
+ - A aplicação permite o envio de emails via textarea ou upload de arquivos (.txt ou .pdf), processa o conteúdo localmente e retorna a classificação de forma rápida e eficiente.
 
 --- 
+
+### Estratégia de Classificação (Diferencial do Projeto)
+ - A classificação utiliza uma lógica híbrida em três camadas:
+
+ - Regras explícitas de improdutividade
+ - Identifica mensagens sociais, spam ou sem intenção de ação
+ - (ex: promoções, ofertas, mensagens de cordialidade)
+
+ - Regras de intenção produtiva
+ - Detecta palavras-chave relacionadas a ações, solicitações, prazos e processos
+
+ - NLP Local (Hugging Face – DistilBERT)
+ - Utilizado apenas como camada de desempate, evitando erros comuns de classificação por sentimento
+
+ ### Essa abordagem reduz falsos positivos e garante classificação mais precisa, mesmo sem uso de IA paga.
 
 ## Estrutura de Pastas
 
@@ -79,6 +96,8 @@ Desafio-AutoU-Email/
 - **HTML/CSS** (interface)
 
 - **PyPDF2** (leitura de PDFs)
+
+- **Tranformers(Hugging Face) - NLP Local**
 
 ---
 

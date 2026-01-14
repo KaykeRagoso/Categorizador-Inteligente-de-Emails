@@ -45,25 +45,55 @@ form.addEventListener("submit", async (e) => {
 }); 
 
 // Função para mostrar o resultado
-function mostrarResultado(category, reply){
+function mostrarResultado(category, reply) {
+
+    // Reset visual
+    resultSection.classList.remove("show");
+    categorySpan.classList.remove("emailprodutivo", "emailimprodutivo");
+
+    if (!category) {
+        categorySpan.textContent = "Erro na classificação";
+        categorySpan.classList.add("emailimprodutivo");
+        replyParagraph.textContent = "Não foi possível analisar o email.";
+
+        resultSection.classList.remove("hidden");
+        void resultSection.offsetWidth;
+        resultSection.classList.add("show");
+        return;
+    }
+
     categorySpan.textContent = category;
 
-    categorySpan.classList.remove("emailprodutivo","emailimprodutivo");
-
-    if (category.toLowerCase() === "email produtivo"){
+    if (category.toLowerCase() === "email produtivo") {
         categorySpan.classList.add("emailprodutivo");
     } else {
         categorySpan.classList.add("emailimprodutivo");
     }
 
-    replyParagraph.textContent = reply;
+    replyParagraph.textContent = reply || "";
 
     resultSection.classList.remove("hidden");
+    void resultSection.offsetWidth; // força reflow
+    resultSection.classList.add("show");
 }
+
+
 
 //Botão de Resetar
 resetBtn.addEventListener("click", () =>{
-    form.reset();
     resultSection.classList.add("hidden");
+
+    setTimeout(() => {
+        emailText.value = "";
+        emailFile.value = "";
+
+        categorySpan.textContent = "";
+        categorySpan.classList.remove("emailprodutivo", "emailimprodutivo");
+        replyParagraph.textContent = "";
+
+        form.classList.remove("hidden");
+
+        resultSection.classList.add("hidden");
+    }, 400);
 });
     
