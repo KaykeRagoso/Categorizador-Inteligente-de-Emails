@@ -3,27 +3,49 @@ Desafio AutoU - Classificador de Emails
 Este projeto é uma aplicação web que classifica emails como produtivos ou improdutivos utilizando análise de palavras-chave. Ele permite enviar emails via textarea ou upload de arquivos (.txt ou .pdf), e gera uma resposta sugerida baseada na classificação.
 
 Estrutura de Pastas
+
 Desafio-AutoU-Email/
+
 │
+
 ├── Backend/
+
 │   └── main.py          # Código principal do Flask
+
 │
+
 ├── Static/
+
 │   ├── CSS/
+
 │   │   └── style.css    # Estilos da aplicação
+
 │   └── JS/
+
 │       └── main.js      # Lógica de envio do formulário e manipulação do DOM
+
 │
+
 ├── Templates/
+
 │   └── index.html       # Página principal com formulário de envio
+
 │
+
 ├── Upload/
+
 │   └── Text.txt         # Arquivos enviados para análise (armazenamento temporário)
+
 │
+
 ├── venv/                # Ambiente virtual do Python
+
 ├── .gitattributes
+
 ├── .gitignore           # Ignora venv, uploads e arquivos temporários
+
 ├── README.md            # Este arquivo
+
 └── requirements.txt     # Dependências do projeto
 
 
@@ -58,16 +80,21 @@ Configuração e Execução
 
 Clonar o repositório:
 
-git clone <URL_DO_REPOSITORIO>
+git clone <URL\_DO\_REPOSITORIO>
+
 cd Desafio-AutoU-Email
 
 
 Criar e ativar o ambiente virtual:
 
 python -m venv venv
-# Windows
+
+\# Windows
+
 venv\Scripts\activate
-# macOS/Linux
+
+\# macOS/Linux
+
 source venv/bin/activate
 
 
@@ -99,12 +126,14 @@ Resposta sugerida
 
 Limite de Upload
 
-O tamanho máximo de arquivos enviados é 7 MB (configurável no main.py com MAX_CONTENT_LENGTH).
+O tamanho máximo de arquivos enviados é 7 MB (configurável no main.py com MAX\_CONTENT\_LENGTH).
 
 Se excedido, o sistema retornará uma mensagem de erro amigável:
 
 {
-    "error": "Arquivo muito grande. O tamanho máximo permitido é 7 MB."
+
+"error": "Arquivo muito grande. O tamanho máximo permitido é 7 MB."
+
 }
 
 Melhorias Futuras
@@ -118,4 +147,5 @@ Interface web responsiva e com histórico de análises.
 Autor
 
 Kayke Ragoso – Desenvolvedor Fullstack
+
 Processo Seletivo AutoU
