@@ -8,7 +8,7 @@ const replyParagraph = document.getElementById("reply");
 const resetBtn = document.getElementById("resetBtn");
 
 form.addEventListener("submit", async (e) => {
-    event.preventDefault();
+    e.preventDefault();
 
     //Validar se não tam vazio
     if(!emailText.value && !emailFile.files.length){
@@ -35,7 +35,7 @@ form.addEventListener("submit", async (e) => {
         }
         const data = await resposta.json();
 
-        showResult(data.category, data.reply);
+        mostrarResultado(data.category, data.reply);
     } catch (error) {
         alert("Ocorreu um erro ao processar o email. Tente novamente.");
         console.error("Erro:", error);
@@ -45,12 +45,12 @@ form.addEventListener("submit", async (e) => {
 }); 
 
 // Função para mostrar o resultado
-function mostrarResultado(caterory, reply){
+function mostrarResultado(category, reply){
     categorySpan.textContent = category;
 
     categorySpan.classList.remove("emailprodutivo","emailimprodutivo");
 
-    if (caterory.toLowerCase() === "emailprodutivo"){
+    if (category.toLowerCase() === "email produtivo"){
         categorySpan.classList.add("emailprodutivo");
     } else {
         categorySpan.classList.add("emailimprodutivo");
