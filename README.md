@@ -1,8 +1,10 @@
-Desafio AutoU - Classificador de Emails
+# Desafio AutoU - Classificador de Emails
 
 Este projeto é uma aplicação web que classifica emails como produtivos ou improdutivos utilizando análise de palavras-chave. Ele permite enviar emails via textarea ou upload de arquivos (.txt ou .pdf), e gera uma resposta sugerida baseada na classificação.
 
-Estrutura de Pastas
+--- 
+
+## Estrutura de Pastas
 
 Desafio-AutoU-Email/
 
@@ -48,104 +50,80 @@ Desafio-AutoU-Email/
 
 └── requirements.txt     # Dependências do projeto
 
+---
 
+## Funcionalidades
 
-Funcionalidades
+- Classificação automática de emails em:
 
-Classificação automática de emails em:
+  - **Email Produtivo**
 
-Email Produtivo
+  - **Email Não Produtivo**
 
-Email Não Produtivo
+- Aceita texto direto ou upload de arquivos (.txt e .pdf)
 
-Aceita texto direto ou upload de arquivos (.txt e .pdf)
+- Geração de resposta sugerida baseada na classificação
 
-Geração de resposta sugerida baseada na classificação
+- Limite de upload de arquivos configurável (ex: 7 MB)
 
-Limite de upload de arquivos configurável (ex: 7 MB)
+- Interface web simples, com feedback de carregamento e resultados
 
-Interface web simples, com feedback de carregamento e resultados
+---
 
-Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
-Python 3 + Flask (backend)
+- **Python 3 + Flask** (backend)
 
-JavaScript (frontend)
+- **JavaScript** (frontend)
 
-HTML/CSS (interface)
+- **HTML/CSS** (interface)
 
-PyPDF2 (leitura de PDFs)
+- **PyPDF2** (leitura de PDFs)
 
-Configuração e Execução
+---
 
-Clonar o repositório:
+## Configuração e Execução
+````bash
+1. Clonar o repostório:
 
-git clone <URL\_DO\_REPOSITORIO>
-
+git clone <URL_DO_REPOSITORIO>
 cd Desafio-AutoU-Email
 
-
-Criar e ativar o ambiente virtual:
-
+2. Criar e ativar o ambiente virtual:
+# Windows
 python -m venv venv
-
-\# Windows
-
 venv\Scripts\activate
 
-\# macOS/Linux
-
+# macOS/Linux
+python -m venv venv
 source venv/bin/activate
 
-
-Instalar dependências:
+3. Instalar dependências:
 
 pip install -r requirements.txt
 
-
-Rodar a aplicação:
+4. Rodar a aplicação:
 
 python Backend/main.py
 
-
-Acesse a aplicação em:
+5. Acesse a aplicação em:
 
 http://127.0.0.1:5000/
+````
+## Uso
+1. Digite o conteúdo do email na textarea ou faça o upload de um arquivo.
+2. Clique em "Analisar Email".
+3. O resultado será exibido com:
+    - Categoria do email
+    - Resposta sugerida
 
-Uso
+## Limite do Upload
 
-Digite o conteúdo do email na textarea ou faça o upload de um arquivo.
+O tamanho máximo de arquivos enviados é 7 MB (configurável no main.py com MAX_CONTENT_LENGTH).
 
-Clique em "Analisar Email".
+Se excedido, o sistema retornará uma mensagem de erro amigável:   "error": "Arquivo muito grande. O tamanho máximo permitido é 7 MB."
 
-O resultado será exibido com:
-
-Categoria do email
-
-Resposta sugerida
-
-Limite de Upload
-
-O tamanho máximo de arquivos enviados é 7 MB (configurável no main.py com MAX\_CONTENT\_LENGTH).
-
-Se excedido, o sistema retornará uma mensagem de erro amigável:
-
-{
-
-"error": "Arquivo muito grande. O tamanho máximo permitido é 7 MB."
-
-}
-
-Melhorias Futuras
-
-Melhorar a classificação utilizando machine learning.
-
-Suporte a mais formatos de arquivo (ex: .docx).
-
-Interface web responsiva e com histórico de análises.
-
-Autor
+## Autor
 
 Kayke Ragoso – Desenvolvedor Fullstack
-
 Processo Seletivo AutoU
