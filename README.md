@@ -105,7 +105,7 @@ Desafio-AutoU-Email/
 ````bash
 1. Clonar o repostório:
 
-git clone <URL_DO_REPOSITORIO>
+git clone https://github.com/KaykeRagoso/Desafio-AutoU-Email
 cd Desafio-AutoU-Email
 
 2. Criar e ativar o ambiente virtual:
