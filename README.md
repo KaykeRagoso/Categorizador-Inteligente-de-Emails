@@ -34,7 +34,7 @@ Aceita texto direto ou upload de arquivos (.txt e .pdf)
 
 Geração de resposta sugerida baseada na classificação
 
-Limite de upload de arquivos configurável (ex: 5 MB)
+Limite de upload de arquivos configurável (ex: 7 MB)
 
 Interface web simples, com feedback de carregamento e resultados
 
@@ -93,12 +93,12 @@ Resposta sugerida
 
 Limite de Upload
 
-O tamanho máximo de arquivos enviados é 5 MB (configurável no main.py com MAX_CONTENT_LENGTH).
+O tamanho máximo de arquivos enviados é 7 MB (configurável no main.py com MAX_CONTENT_LENGTH).
 
 Se excedido, o sistema retornará uma mensagem de erro amigável:
 
 {
-    "error": "Arquivo muito grande. O tamanho máximo permitido é 5 MB."
+    "error": "Arquivo muito grande. O tamanho máximo permitido é 7 MB."
 }
 
 Melhorias Futuras
