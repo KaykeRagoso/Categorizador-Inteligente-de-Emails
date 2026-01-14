@@ -6,20 +6,26 @@ Estrutura de Pastas
 Desafio-AutoU-Email/
 │
 ├── Backend/
-│   └── main.py          # Código principal da API Flask
+│   └── main.py          # Código principal do Flask
 │
-├── JS/
-│   └── main.js          # Scripts do frontend
-│
-├── Styles/
-│   └── style.css        # Estilos CSS
+├── Static/
+│   ├── CSS/
+│   │   └── style.css    # Estilos da aplicação
+│   └── JS/
+│       └── main.js      # Lógica de envio do formulário e manipulação do DOM
 │
 ├── Templates/
-│   └── index.html       # Template HTML
+│   └── index.html       # Página principal com formulário de envio
 │
-├── Upload/              # Pasta para armazenar arquivos enviados
-├── venv/                # Ambiente virtual Python
-└── .gitignore
+├── Upload/
+│   └── Text.txt         # Arquivos enviados para análise (armazenamento temporário)
+│
+├── venv/                # Ambiente virtual do Python
+├── .gitattributes
+├── .gitignore           # Ignora venv, uploads e arquivos temporários
+├── README.md            # Este arquivo
+└── requirements.txt     # Dependências do projeto
+
 
 
 Funcionalidades
