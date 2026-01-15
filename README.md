@@ -11,6 +11,7 @@
 
  - Regras explícitas de improdutividade
  - Identifica mensagens sociais, spam ou sem intenção de ação
+
  - (ex: promoções, ofertas, mensagens de cordialidade)
 
  - Regras de intenção produtiva
@@ -98,6 +99,24 @@ Desafio-AutoU-Email/
 - **PyPDF2** (leitura de PDFs)
 
 - **Tranformers(Hugging Face) - NLP Local**
+
+---
+## Configuração de Token HUgging Face
+1. Crie a variável de ambiente HF_TOKEN
+
+- Windows(PowerShell)
+````bash
+sext HF_TOKEN "seu token"
+````
+
+- Linux/MacOS(bash\zsh)
+````bash
+export HF_TOKEN="seu_token_aqui"
+````
+
+No Render, adicione HF_TOKEN nas configurações de variáveis de ambiente.
+
+2. O main.py lê automaticamente o token
 
 ---
 
