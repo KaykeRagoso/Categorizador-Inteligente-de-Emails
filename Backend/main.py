@@ -19,24 +19,28 @@ app = Flask(
 
 UPLOAD_PASTA = os.path.join(caminho_diretorio, "..", "Upload")
 EXTENSOES_PERMITIDAS = {"txt", "pdf"}
-
 app.config["UPLOAD_PASTA"] = UPLOAD_PASTA
 app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024  # 5MB
 
 if not os.path.exists(UPLOAD_PASTA):
     os.makedirs(UPLOAD_PASTA)
 
-# NLP LOCAL
+# Limites para economizar memória
+MAX_PAGES_PDF = 5
+MAX_CHARS_PREPROCESS = 2000
+
+# NLP local
 sentiment_analyzer = None
 def get_sentiment_analyzer():
     global sentiment_analyzer
     if sentiment_analyzer is None:
         sentiment_analyzer = pipeline(
             "sentiment-analysis",
-            model="distilbert-base-uncased-finetuned-sst-2-mini"
+            model="mrm8488/distilbert-base-uncased-finetuned-sst2"  # modelo leve
         )
     return sentiment_analyzer
 
+# Helpers
 def entrada_arquivo(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in EXTENSOES_PERMITIDAS
 
@@ -67,7 +71,9 @@ def ler_arquivo(caminho_arquivo):
         texto = ""
         with open(caminho_arquivo, "rb") as file:
             reader = PyPDF2.PdfReader(file)
-            for page in reader.pages:
+            for i, page in enumerate(reader.pages):
+                if i >= MAX_PAGES_PDF:
+                    break
                 texto += page.extract_text() or ""
         return texto
     return ""
@@ -88,6 +94,7 @@ def gerar_resposta(categoria):
 
 def classificar_email_hibrido(texto):
     texto_lower = texto.lower()
+    # Regras de palavras
     regras_improdutivas = [
         "marketing","newsletter","promoção","oferta","publicidade",
         "spam","propaganda","anúncio","desconto","venda",
@@ -101,18 +108,23 @@ def classificar_email_hibrido(texto):
         "confirmação","retorno","atualização","encaminho", "poderia"
     ]
 
+    # Camada 1 – improdutivo explícito
     if any(p in texto_lower for p in regras_improdutivas):
         categoria = "Email Improdutivo"
         return {"category": categoria, "reply": gerar_resposta(categoria)}
+    # Camada 2 – produtivo por intenção
     if any(p in texto_lower for p in palavras_acao):
         categoria = "Email Produtivo"
         return {"category": categoria, "reply": gerar_resposta(categoria)}
 
+    # Camada 3 – NLP (desempate)
+    texto_nlp = texto[:MAX_CHARS_PREPROCESS]
     analyzer = get_sentiment_analyzer()
-    resultado = analyzer(texto[:256])[0]
+    resultado = analyzer(texto_nlp)[0]
     categoria = "Email Produtivo" if resultado["label"].lower() == "positive" and resultado["score"] >= 0.85 else "Email Improdutivo"
     return {"category": categoria, "reply": gerar_resposta(categoria)}
 
+# Rotas
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -134,10 +146,11 @@ def analisar_email():
             conteudo += ler_arquivo(caminho)
         if email_text:
             conteudo += " " + email_text
+
         if not conteudo.strip():
             return jsonify({"error": "Nenhum conteúdo encontrado."}), 400
 
-        texto_limpo = preprocessar_texto(conteudo)
+        texto_limpo = preprocessar_texto(conteudo[:MAX_CHARS_PREPROCESS])
         resultado = classificar_email_hibrido(texto_limpo)
         return jsonify(resultado)
 
@@ -149,6 +162,7 @@ def analisar_email():
 def arquivo_grande(error):
     return jsonify({"error": "Arquivo muito grande. O tamanho máximo permitido é 5MB."}), 413
 
+# Inicialização
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
