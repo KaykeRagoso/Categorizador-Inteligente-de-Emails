@@ -34,6 +34,7 @@ body {
   padding: 2.5rem 1rem 1.5rem;
 }
 
+/* Header Title */
 .header h1 {
   font-size: 2rem;
   margin-bottom: 0.5rem;
@@ -82,6 +83,7 @@ textarea {
   margin-bottom: 1rem;
 }
 
+/* Textarea focus */
 textarea:focus {
   outline: none;
   border-color: var(--primary);
@@ -92,6 +94,7 @@ input[type="file"] {
   margin-bottom: 1.5rem;
 }
 
+/* Divisor */
 .divider {
   text-align: center;
   color: var(--muted);
@@ -117,23 +120,24 @@ button {
     background-color 0.2s ease;
 }
 
+/* Botão hover */
 button:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 18px rgba(0,0,0,0.25);
   background-color: var(--primary-hover);
 }
-
+/* Botão ativo */
 button:active{
   transform: translateY(0);
 }
-
+/* Botão secundário */
 button.secondary {
   margin-top: 1rem;
   background-color: transparent;
   color: var(--primary);
   border: 1px solid var(--primary);
 }
-
+/* Botão secundário hover */
 button.secondary:hover {
   background-color: rgba(37, 99, 235, 0.08);
 }
@@ -144,7 +148,7 @@ button.secondary:hover {
   color: var(--muted);
   margin: 1.5rem 0;
 }
-
+/* Carregamento spinner */
 .spinner {
   width: 36px;
   height: 36px;
@@ -154,7 +158,7 @@ button.secondary:hover {
   margin: 0 auto 0.8rem;
   animation: spin 0.9s linear infinite;
 }
-
+/* Animação do spinner */
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -176,11 +180,12 @@ button.secondary:hover {
   display: inline-block;
 }
 
+/* Badge produtivo/improdutivo */
 .badge.emailprodutivo {
   background-color: rgba(22, 163, 74, 0.15);
   color: var(--success);
 }
-
+/* Badge improdutivo */
 .badge.emailimprodutivo {
   background-color: rgba(220, 38, 38, 0.15);
   color: var(--danger);
@@ -191,7 +196,7 @@ button.secondary:hover {
   transform: translateY(10px);
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
-
+/* Estado visível da animação */
 .fade:not(.hidden) {
   opacity: 1;
   transform: translateY(0);
