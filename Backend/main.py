@@ -36,7 +36,7 @@ def get_sentiment_analyzer():
     if sentiment_analyzer is None:
         sentiment_analyzer = pipeline(
             "sentiment-analysis",
-            model="mrm8488/distilbert-base-uncased-finetuned-sst2"  # modelo leve
+            model="distilbert/distilbert-base-uncased-finetuned-sst-2-english"
         )
     return sentiment_analyzer
 
