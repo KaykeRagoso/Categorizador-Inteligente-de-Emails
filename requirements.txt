@@ -1,5 +1,6 @@
 flask
+werkzeug
 PyPDF2
 transformers
 torch
-werkzeug
+python-dotenv
