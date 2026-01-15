@@ -1,14 +1,15 @@
 from flask import Flask, request, jsonify, render_template
 from werkzeug.utils import secure_filename
 from werkzeug.exceptions import RequestEntityTooLarge
-
 import os
 import re
 import PyPDF2
 import unicodedata
-from transformers import pipeline
+import requests
+from dotenv import load_dotenv
+load_dotenv()
 
-# Configurações
+# Configuração do Flask
 caminho_diretorio = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(
@@ -25,30 +26,37 @@ app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024  # 5MB
 if not os.path.exists(UPLOAD_PASTA):
     os.makedirs(UPLOAD_PASTA)
 
-# Limites para economizar memória
-MAX_PAGES_PDF = 5
-MAX_CHARS_PREPROCESS = 2000
-
-# NLP local
-sentiment_analyzer = None
-def get_sentiment_analyzer():
-    global sentiment_analyzer
-    if sentiment_analyzer is None:
-        sentiment_analyzer = pipeline(
-            "sentiment-analysis",
-            model="distilbert/distilbert-base-uncased-finetuned-sst-2-english"
-        )
-    return sentiment_analyzer
-
-# Helpers
-def entrada_arquivo(filename):
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in EXTENSOES_PERMITIDAS
-
 STOPWORDS = {
     "a", "à", "ao", "aos", "as", "até", "com", "da", "das", "de", "do", "dos",
     "e", "em", "na", "nas", "no", "nos",
     "o", "os", "para", "por", "que", "se", "sem", "um", "uma", "umas", "uns"
 }
+
+MAX_CHARS_PREPROCESS = 512  # Limite para análise NLP
+
+#  HUGGING FACE API
+HF_API_URL = "https://api-inference.huggingface.co/models/distilbert-base-uncased-finetuned-sst-2"
+HF_TOKEN = os.environ.get("HF_TOKEN") 
+HEADERS = {"Authorization": f"Bearer {HF_TOKEN}"}
+
+def analisar_sentimento_hf(texto):
+    try:
+        texto = texto[:MAX_CHARS_PREPROCESS]  # Limitar caracteres
+        response = requests.post(HF_API_URL, headers=HEADERS, json={"inputs": texto}, timeout=10)
+        data = response.json()
+        if isinstance(data, list) and len(data) > 0 and "label" in data[0]:
+            label = data[0]["label"].lower()
+            score = float(data[0]["score"])
+            categoria = "Email Produtivo" if label == "positive" and score >= 0.85 else "Email Improdutivo"
+            return categoria
+        return "Email Improdutivo"
+    except Exception as e:
+        print("Erro Hugging Face API:", e)
+        return "Email Improdutivo"
+
+#  Funções 
+def entrada_arquivo(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in EXTENSOES_PERMITIDAS
 
 def preprocessar_texto(texto):
     texto = texto.lower()
@@ -71,9 +79,7 @@ def ler_arquivo(caminho_arquivo):
         texto = ""
         with open(caminho_arquivo, "rb") as file:
             reader = PyPDF2.PdfReader(file)
-            for i, page in enumerate(reader.pages):
-                if i >= MAX_PAGES_PDF:
-                    break
+            for page in reader.pages:
                 texto += page.extract_text() or ""
         return texto
     return ""
@@ -92,9 +98,9 @@ def gerar_resposta(categoria):
             "Obrigado pelo seu contato."
         )
 
+# Classificação híbrida
 def classificar_email_hibrido(texto):
     texto_lower = texto.lower()
-    # Regras de palavras
     regras_improdutivas = [
         "marketing","newsletter","promoção","oferta","publicidade",
         "spam","propaganda","anúncio","desconto","venda",
@@ -108,20 +114,13 @@ def classificar_email_hibrido(texto):
         "confirmação","retorno","atualização","encaminho", "poderia"
     ]
 
-    # Camada 1 – improdutivo explícito
     if any(p in texto_lower for p in regras_improdutivas):
         categoria = "Email Improdutivo"
-        return {"category": categoria, "reply": gerar_resposta(categoria)}
-    # Camada 2 – produtivo por intenção
-    if any(p in texto_lower for p in palavras_acao):
+    elif any(p in texto_lower for p in palavras_acao):
         categoria = "Email Produtivo"
-        return {"category": categoria, "reply": gerar_resposta(categoria)}
+    else:
+        categoria = analisar_sentimento_hf(texto)
 
-    # Camada 3 – NLP (desempate)
-    texto_nlp = texto[:MAX_CHARS_PREPROCESS]
-    analyzer = get_sentiment_analyzer()
-    resultado = analyzer(texto_nlp)[0]
-    categoria = "Email Produtivo" if resultado["label"].lower() == "positive" and resultado["score"] >= 0.85 else "Email Improdutivo"
     return {"category": categoria, "reply": gerar_resposta(categoria)}
 
 # Rotas
@@ -150,7 +149,7 @@ def analisar_email():
         if not conteudo.strip():
             return jsonify({"error": "Nenhum conteúdo encontrado."}), 400
 
-        texto_limpo = preprocessar_texto(conteudo[:MAX_CHARS_PREPROCESS])
+        texto_limpo = preprocessar_texto(conteudo)
         resultado = classificar_email_hibrido(texto_limpo)
         return jsonify(resultado)
 
@@ -162,7 +161,7 @@ def analisar_email():
 def arquivo_grande(error):
     return jsonify({"error": "Arquivo muito grande. O tamanho máximo permitido é 5MB."}), 413
 
-# Inicialização
+# Execução da aplicação
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
