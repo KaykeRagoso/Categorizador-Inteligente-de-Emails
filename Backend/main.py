@@ -21,7 +21,7 @@ UPLOAD_PASTA = os.path.join(caminho_diretorio, "..", "Upload")
 EXTENSOES_PERMITIDAS = {"txt", "pdf"}
 
 app.config["UPLOAD_PASTA"] = UPLOAD_PASTA
-app.config["MAX_CONTENT_LENGTH"] = 7 * 1024 * 1024  # 7MB
+app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024  # 5MB
 
 if not os.path.exists(UPLOAD_PASTA):
     os.makedirs(UPLOAD_PASTA)
@@ -33,7 +33,7 @@ def get_sentiment_analyzer():
     if sentiment_analyzer is None:
         sentiment_analyzer = pipeline(
             "sentiment-analysis",
-            model="distilbert/distilbert-base-uncased-finetuned-sst-2-english"
+            model="distilbert-base-uncased-finetuned-sst-2-mini"
         )
     return sentiment_analyzer
 
@@ -109,7 +109,7 @@ def classificar_email_hibrido(texto):
         return {"category": categoria, "reply": gerar_resposta(categoria)}
 
     analyzer = get_sentiment_analyzer()
-    resultado = analyzer(texto[:512])[0]
+    resultado = analyzer(texto[:256])[0]
     categoria = "Email Produtivo" if resultado["label"].lower() == "positive" and resultado["score"] >= 0.85 else "Email Improdutivo"
     return {"category": categoria, "reply": gerar_resposta(categoria)}
 
@@ -147,7 +147,7 @@ def analisar_email():
 
 @app.errorhandler(RequestEntityTooLarge)
 def arquivo_grande(error):
-    return jsonify({"error": "Arquivo muito grande. O tamanho máximo permitido é 7MB."}), 413
+    return jsonify({"error": "Arquivo muito grande. O tamanho máximo permitido é 5MB."}), 413
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
