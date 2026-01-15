@@ -81,7 +81,7 @@ Desafio-AutoU-Email/
 
 - Geração de resposta sugerida baseada na classificação
 
-- Limite de upload de arquivos configurável (ex: 7 MB)
+- Limite de upload de arquivos configurável (ex: 5 MB)
 
 - Interface web simples, com feedback de carregamento e resultados
 
@@ -138,9 +138,9 @@ http://127.0.0.1:5000/
 
 ## Limite do Upload
 
-O tamanho máximo de arquivos enviados é 7 MB (configurável no main.py com MAX_CONTENT_LENGTH).
+O tamanho máximo de arquivos enviados é 5 MB (configurável no main.py com MAX_CONTENT_LENGTH).
 
-Se excedido, o sistema retornará uma mensagem de erro amigável:   "error": "Arquivo muito grande. O tamanho máximo permitido é 7 MB."
+Se excedido, o sistema retornará uma mensagem de erro amigável:   "error": "Arquivo muito grande. O tamanho máximo permitido é 5 MB."
 
 ## Autor
 
