@@ -1,4 +1,4 @@
-# Desafio AutoU - Classificador Inteligente de Emails
+# Categorizador Inteligente de Emails
 
 Este projeto é uma aplicação web para **classificação automática de emails corporativos** em **Produtivos** ou **Improdutivos**, utilizando uma **arquitetura híbrida de Inteligência Artificial (NLP)** com foco em **baixo custo operacional**, **previsibilidade** e **uso responsável de IA**, atendendo a cenários reais de produção.
 
@@ -8,13 +8,13 @@ A solução foi desenhada considerando **restrições de infraestrutura (512MB d
 
 ## 🎯 Objetivo do Projeto
 
-Automatizar a leitura, classificação e sugestão de resposta para emails corporativos, reduzindo esforço humano, tempo de resposta e ruído operacional, sem comprometer governança, compliance e segurança da informação.
+Automatizar a leitura, classificação e sugestão de resposta para emails corporativos, reduzindo esforço humano, tempo de resposta e ruído operacional, sem comprometer compliance, segurança da informação e padronização corporativa.
 
 ---
 
 ## 🧠 Estratégia de Classificação (Diferencial do Projeto)
 
-A aplicação utiliza uma **abordagem híbrida em três camadas**, combinando regras semânticas com **Inteligência Artificial baseada em Transformers**:
+A aplicação utiliza uma **abordagem híbrida em três camadas**, combinando regras semânticas explícitas com **Processamento de Linguagem Natural (NLP)** baseado em **Transformers**, garantindo equilíbrio entre desempenho, custo e precisão.
 
 ### 1️⃣ Regras Explícitas de Improdutividade
 
@@ -88,7 +88,7 @@ Essa decisão arquitetural previne riscos comuns em soluções baseadas exclusiv
 ## 🗂 Estrutura de Pastas
 
 ```
-Desafio-AutoU-Email/
+Categorizador-Inteligente-de-Emails/
 │
 ├── Backend/
 │   └── main.py          # Backend Flask e lógica de NLP
@@ -147,8 +147,8 @@ No Render ou outro provedor de hospedagem, adicionar `HF_TOKEN` nas variáveis d
 ```bash
 1. Clonar o repositório:
 
-git clone https://github.com/KaykeRagoso/Desafio-AutoU-Email
-cd Desafio-AutoU-Email
+git clone https://github.com/KaykeRagoso/Categorizador-Inteligente-de-Emails
+cd Categorizador_inteligente-de-Emails
 
 2. Criar e ativar o ambiente virtual:
 
@@ -201,7 +201,7 @@ http://127.0.0.1:5000/
 
 **Kayke Ragoso**
 Desenvolvedor Fullstack
-Processo Seletivo AutoU
+Projeto desenvolvido como case técnico e de portfólio, com foco em arquitetura backend, NLP aplicado e uso responsável de Inteligência Artificial.
 
 ---
 
